@@ -1,0 +1,37 @@
+<his-header
+  [value]="value"
+  [isSearchDisabled]="isSearchDisabled"
+  (sendRow)="onRowSelect($event)"
+  (search)="onSearch($event)"
+></his-header>
+<!-- {{currentRow |json}} -->
+<!-- 打開註解測試客製化template傳進去header.component -->
+<!-- <his-header
+[value]="value"
+[isSearchDisabled]="isSearchDisabled"
+(sendRow)="onRowSelect($event)"
+(search)="onSearch($event)"
+[detailTemplate]="detailTemplate"
+[titleTemplate]="titleTemplate"
+[listTemplate]="listTemplate"
+></his-header>
+
+<ng-template #detailTemplate>
+  {{currentRow |json}}
+  <p>沒有使用default樣板，所以呈現json格式</p>
+</ng-template>
+
+
+
+ <ng-template #titleTemplate>
+  <p>{{currentRow |json}} 沒有使用default樣板，所以呈現json格式</p>
+</ng-template>
+
+
+<ng-template #listTemplate  let-currentRow>
+  <tr >
+    <td>{{currentRow.id }}</td>
+    <td>{{currentRow.name }}</td>
+    <td>{{currentRow.state }}</td>
+  </tr>
+</ng-template> -->

@@ -1,0 +1,102 @@
+:host {
+  ::ng-deep {
+    .p-toolbar {
+      display: flex;
+      padding: 9px 1rem;
+      gap: 0;
+    }
+    .p-toolbar-group-center {
+      flex: 1;
+      justify-content: space-between;
+      padding-right: 10px;
+      .py-2 {
+        gap: 5px;
+        display: flex;
+      }
+    }
+    .p-input-icon-right {
+      align-items: center;
+      justify-content: center;
+    }
+    .p-toolbar-group-start {
+      gap: 10px;
+    }
+    .p-button.p-button-icon-only.p-button-rounded {
+      width: 2rem;
+      height: 2rem;
+    }
+    .p-dialog {
+      position: absolute;
+      top: 60px;
+      margin-top: -28rem;
+    }
+    .shortResult {
+      color: var(--surface-on-surface, #1c1d1c);
+      font-family: Noto Sans TC;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 28px;
+      letter-spacing: 0.4px;
+    }
+    .pi-user {
+      color: var(--surface-on-surface, #1c1d1c);
+    }
+    .pi-angle-right:before {
+      color: var(--surface-on-surface, #001b14);
+    }
+    .pi-angle-left:before {
+      color: var(--surface-on-surface, #001b14);
+    }
+    .pi-search:before {
+      color: var(--surface-on-surface, #1c1d1c);
+    }
+
+    i.pi.pi-times {
+      margin-left: 18rem;
+      cursor: pointer;
+      input::-ms-clear {
+        display: none;
+      }
+    }
+    .p-inputtext {
+      color: var(--black-o-38, rgba(19, 20, 20, 0.38));
+      font-family: Noto Sans TC;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: 0.16px;
+      display: flex;
+      padding-top: 9px;
+      padding-bottom: 9px;
+      width: 320px;
+
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .p-inputtext.p-component {
+      color: var(--surface-on-surface, #1c1d1c);
+    }
+
+    .pi-list {
+      color: var(--surface-on-surface, #1c1d1c);
+      display: flex;
+      padding: var(--spacing-xs, 4px);
+      align-items: center;
+      gap: var(--spacing-xs, 4px);
+      display: flex;
+      width: 24px;
+      height: 24px;
+      padding: 6.505px 4.25px 6.5px 4px;
+      justify-content: center;
+      align-items: center;
+    }
+    .p-dialog .p-dialog-header {
+      padding: 1rem;
+    }
+    .p-datatable .p-datatable-tbody > tr > td {
+      padding: 0.5rem 1rem;
+    }
+  }
+}
