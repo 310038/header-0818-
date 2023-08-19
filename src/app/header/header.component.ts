@@ -8,8 +8,6 @@ import {
   Output,
   SimpleChanges,
   TemplateRef,
-  effect,
-  signal,
 } from '@angular/core';
 import { InputMaskModule } from 'primeng/inputmask';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -89,7 +87,6 @@ export class HeaderComponent  implements OnInit {
     //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
     //Add '${implements OnChanges}' to the class.
     this.onChange();
-    console.log('觸發 effect且this.#currentRow=', this.#currentRow);
     this.isUseDefaultTemplate();
   }
 
