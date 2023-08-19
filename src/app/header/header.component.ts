@@ -129,7 +129,9 @@ export class HeaderComponent  implements OnInit {
     this.search.emit(searchText);
     console.log('觸發 onSearch');
     this.#currentIndex.set(-1);
-    this.yamlDocument = jsyaml.dump(this.#value[0]);
+    if (this.isUseDefaultTemplate()) {
+      this.yamlDocument = jsyaml.dump(this.#value[0]);
+    }
   }
 
   /**
