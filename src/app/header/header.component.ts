@@ -50,7 +50,6 @@ export class HeaderComponent  implements OnInit {
   @Input()
   set value(value: any) {
     this.#value = value;
-    console.log('觸發 set value且value=', value);
     if (value && value.length > 0) {
       this.#currentIndex=0;   // 有資料時，currentIndex 設為 0
     }
@@ -79,6 +78,13 @@ export class HeaderComponent  implements OnInit {
   #currentIndex = -1; // 沒有資料時，currentIndex 設為 -1
   #currentRow: any;
 
+    /**
+   * 初始化
+   */
+    ngOnInit(): void {
+      this.#initValue = this.value;
+    }
+
   ngOnChanges(changes: SimpleChanges): void {
     //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
     //Add '${implements OnChanges}' to the class.
@@ -87,27 +93,7 @@ export class HeaderComponent  implements OnInit {
     this.isUseDefaultTemplate();
   }
 
-  // constructor() {
-  //   console.log('觸發 constructor');
-  //   // 監聽 currentIndex 的變化
-  //   effect(() => {
-  //     // if(this.#currentIndex() < 0) return; // 沒有資料時，不執行(可以消掉ERROR TypeError: Cannot read properties of undefined (reading '-1'))
-  //     this.#currentRow = this.value[this.#currentIndex];
-  //     console.log('觸發 effect且this.#currentRow=', this.#currentRow);
-  //     if (this.isUseDefaultTemplate()) {
-  //       this.yamlDocument = jsyaml.dump(this.#currentRow);
-  //     }
-  //     this.change.emit(this.#currentRow);
-  //   })
-  // }
 
-  /**
-   * 初始化
-   */
-  ngOnInit(): void {
-    console.log('觸發 ngOnInit');
-    this.#initValue = this.value;
-  }
 
   /**
    * 上一筆資料
@@ -126,7 +112,7 @@ export class HeaderComponent  implements OnInit {
     this.isUseDefaultTemplate();
   }
   /**
-   * 點選一筆資料
+   * 目前顯示資料欲變更
    */
   onChange(){
     this.#currentRow = this.#value[this.#currentIndex];
@@ -162,7 +148,8 @@ export class HeaderComponent  implements OnInit {
   onSearchClear(): void {
     this.searchText = '';
     this.value = this.#initValue; // 回復原始資料
-    this.#currentIndex=0;
+    this.onChange();
+    this.isUseDefaultTemplate();
   }
 
 
