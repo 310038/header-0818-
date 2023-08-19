@@ -54,13 +54,11 @@ export class AppComponent {
     this.value= this.dataService.search(text);
   }
 
-  async onChange(row: any) {
-    await console.log(`（app這邊）onChange觸發`);
-    await console.log(`（app這邊）改變之前的currentRow`,this.currentRow);
-    await console.log(`（app這邊）收到從header傳來的Row`,row);
-    await row;
+   onChange(row: any) {
+     console.log(`（app這邊）onChange觸發`);
+    console.log(`（app這邊）改變之前的currentRow`, this.currentRow);
+    console.log(`（app這邊）收到從header傳來的Row`, row);
     this.currentRow = row;
-    await console.log(`（app這邊）改變之後的currentRow`,this.currentRow);
+    console.log(`（app這邊）改變之後的currentRow`, this.currentRow);
   }
-
 }
