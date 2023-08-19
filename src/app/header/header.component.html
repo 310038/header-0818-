@@ -2,140 +2,78 @@
   <div class="p-toolbar-group-start">
     <div class="data">
       <div class="flex flex-wrap gap-2">
-        <button
-          pButton
-          pRipple
-          type="button"
-          icon="pi pi-user"
-          (click)="onDetailClick()"
-          styleClass="p-button-secondary mr-2"
-          class="p-button-rounded p-button-text p-button-plain"
-        ></button>
+        <button pButton pRipple type="button" icon="pi pi-user" (click)="isShowDetail = !isShowDetail"
+          styleClass="p-button-secondary mr-2" class="p-button-rounded p-button-text p-button-plain"></button>
       </div>
 
-      <p-dialog
-        header="查詢結果"
-        [(visible)]="isDetail"
-        [style]="{ width: '20vw' }"
-        [position]="'left'"
+      <p-dialog header="詳細資料" [(visible)]="isShowDetail" [style]="{ width: '20vw' }" [position]="'left'"
         [draggable]="false"
-        class="border-round w-12rem h-6rem bg-primary font-bold flex align-items-center justify-content-center"
-      >
-        <ng-container
-          [ngTemplateOutlet]="detailTemplate || defaultDetailTemplate"
-        >
+        class="border-round w-12rem h-6rem bg-primary font-bold flex align-items-center justify-content-center">
+        <ng-container [ngTemplateOutlet]="detailTemplate || defaultDetailTemplate">
         </ng-container>
       </p-dialog>
-
-      <ng-template #defaultDetailTemplate>
-        <pre>{{ rowYaml }}</pre>
-      </ng-template>
     </div>
   </div>
 
   <div class="p-toolbar-group-center">
-    <ng-container
-      [ngTemplateOutlet]="titleTemplate || defaultTitleTemplate"
-    ></ng-container>
-
-    <ng-template #defaultTitleTemplate>
-      <div class="shortResult">
-        {{ rowYaml }}
-      </div>
-    </ng-template>
+    <ng-container [ngTemplateOutlet]="titleTemplate || defaultTitleTemplate"></ng-container>
 
     <div class="py-2">
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="pi pi-angle-left"
-        (click)="onPrevClick()"
-        styleClass="p-button-secondary mr-2"
-        class="p-button-rounded p-button-text p-button-plain"
-      ></button>
+      <button pButton pRipple type="button" icon="pi pi-angle-left" (click)="onPrevClick()"
+        styleClass="p-button-secondary mr-2" class="p-button-rounded p-button-text p-button-plain"></button>
 
-      <button
-        pButton
-        pRipple
-        type="button"
-        icon="pi pi-angle-right"
-        (click)="onNextClick()"
-        styleClass="p-button-secondary mr-2"
-        class="p-button-rounded p-button-text p-button-plain"
-      ></button>
+      <button pButton pRipple type="button" icon="pi pi-angle-right" (click)="onNextClick()"
+        styleClass="p-button-secondary mr-2" class="p-button-rounded p-button-text p-button-plain"></button>
     </div>
   </div>
 
-   <div class="p-toolbar-group-start">
+  <div class="p-toolbar-group-start">
     <section>
       <span class="p-input-icon-left p-input-icon-right">
         <i class="pi pi-search"></i>
-        <input
-        [disabled]="isSearchDisabled"
-          type="text"
-          pInputText
-          placeholder="請輸入身分證字號或病歷號碼"
-          #search
-          [(ngModel)]="searchText"
-          (keyup.enter)="onSearch(search.value)"
-        />
+        <input [disabled]="isSearchDisabled" type="text" pInputText placeholder="請輸入身分證字號或病歷號碼" #search
+          [(ngModel)]="searchText" (keyup.enter)="onSearch(search.value)" />
         <i class="pi pi-times" (click)="onSearchClear()"></i>
       </span>
     </section>
 
-    <button
-      pButton
-      pRipple
-      type="button"
-      icon="pi pi-list"
-      (click)="onListClick()"
-      styleClass="p-button-secondary mr-2"
-      class="p-button-rounded p-button-text p-button-plain"
-    ></button>
+    <button pButton pRipple type="button" icon="pi pi-list" (click)="isShowList = !isShowList"
+      styleClass="p-button-secondary mr-2" class="p-button-rounded p-button-text p-button-plain"></button>
 
 
 
-    <p-dialog
-      header="查詢結果"
-      [(visible)]="isSearch"
-      [style]="{ width: '20vw' }"
-      [position]="'right'"
+    <p-dialog header="查詢清單" [(visible)]="isShowList" [style]="{ width: '20vw' }" [position]="'right'"
       [draggable]="false"
-      class="border-round w-12rem h-6rem bg-primary font-bold flex align-items-center justify-content-center"
-    >
-
-        <p-table [value]="value" [tableStyle]="{ 'min-width': '10rem' }">
-          <ng-template pTemplate="header" >
-            <tr>
-              <th>{{ getKey(value[0], 0) }}</th>
-              <th>{{ getKey(value[0], 1) }}</th>
-              <th>{{ getKey(value[0], 2) }}</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
-            <tr
-              (click)="onRowSelect(rowIndex)"
-              [pSelectableRow]="row"
-            >
-            <ng-container
-            [ngTemplateOutlet]="listTemplate || defaultListTemplate"
-            [ngTemplateOutletContext]="{$implicit: row}"
-          ></ng-container>
-
-            </tr>
-          </ng-template>
-        </p-table>
+      class="border-round w-12rem h-6rem bg-primary font-bold flex align-items-center justify-content-center">
+      <ng-container [ngTemplateOutlet]="listTemplate || defaultListTemplate"
+        [ngTemplateOutletContext]="{$implicit: value}"></ng-container>
     </p-dialog>
 
-    <ng-template #defaultListTemplate let-row >
-      <td>{{ row[getKey(value[0], 0)] }}</td>
-      <td>{{ row[getKey(value[0], 1)] }}</td>
-      <td>{{ row[getKey(value[0], 2)] }}</td>
+    <ng-template #defaultTitleTemplate>
+      <div class="shortResult">
+        {{ yamlDocument }}
+      </div>
     </ng-template>
 
+    <ng-template #defaultDetailTemplate>
+      <pre>{{ yamlDocument }}</pre>
+    </ng-template>
+
+    <ng-template #defaultListTemplate let-row>
+      <p-table [value]="value" [tableStyle]="{ 'min-width': '10rem' }">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ getKey(value[0], 0) }}</th>
+            <th>{{ getKey(value[0], 1) }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+          <tr (click)="onRowSelect(rowIndex)" [pSelectableRow]="row">
+            <td>{{ row[getKey(value[0], 0)] }}</td>
+            <td>{{ row[getKey(value[0], 1)] }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </ng-template>
   </div>
 </p-toolbar>
-
-

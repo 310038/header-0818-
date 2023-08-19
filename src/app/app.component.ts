@@ -52,11 +52,9 @@ export class AppComponent {
 
   onSearch(text: string) {
     this.value= this.dataService.search(text);
-
   }
 
-  onRowSelect(currentRow: any) {
-    this.currentRow = currentRow;
+   onChange(row: any) {
+    this.currentRow = row;
   }
-
 }

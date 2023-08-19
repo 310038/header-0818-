@@ -6,8 +6,8 @@ import {
   Input,
   OnInit,
   Output,
+  SimpleChanges,
   TemplateRef,
-  signal,
 } from '@angular/core';
 import { InputMaskModule } from 'primeng/inputmask';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -42,106 +42,128 @@ import { TimesIcon } from 'primeng/icons/times';
     TimesIcon,
   ],
 })
-export class HeaderComponent implements OnInit {
-  //接收由其他component灌進來的資料(value)
-  // announce a signal named value which is a data array
-  @Input() value!:any
+export class HeaderComponent  implements OnInit {
 
-  @Input() isSearchDisabled: boolean = false;
-  @Input() detailTemplate!: TemplateRef<any>;
+  #value: any;
+  @Input()
+  set value(value: any) {
+    this.#value = value;
+    if (value && value.length > 0) {
+      this.#currentIndex=0;   // 有資料時，currentIndex 設為 0
+    }
+    else {
+      this.#currentIndex=-1;  // 沒有資料時，currentIndex 設為 -1
+    }
+  }
+  get value(): any {
+    return this.#value;
+  }
   @Input() titleTemplate!: TemplateRef<any>;
+  @Input() detailTemplate!: TemplateRef<any>;
   @Input() listTemplate!: TemplateRef<any>;
+  @Input() isSearchDisabled: boolean = false;
 
-  @Output() sendRow = new EventEmitter<any>();
   @Output() search = new EventEmitter<any>();
 
-  currentIndex: number = 0;
-  row : any;
-  rowYaml: any;
-  isDetail: boolean = false;
-  isSearch: boolean = false;
+  @Output() change = new EventEmitter<any>();
+
+  yamlDocument: any;
   searchText: string = '';
+  isShowDetail: boolean = false;
+  isShowList: boolean = false;
 
-  valueSignal = signal<any>([]);
+  #initValue: any;
+  #currentIndex = -1; // 沒有資料時，currentIndex 設為 -1
+  #currentRow: any;
 
-
-
-  ngOnInit(): void {
-    this.valueSignal.set(this.value);
-    this.row = this.valueSignal()[0];
-    console.log(this.valueSignal())
-    console.log(this.row)
-    this.createYaml();
-
-  }
-  // 用來取得物件(外部灌進來的資料）的key
-  getKey(obj: any, index: number): string {
-    // if there is no object return empty string
-    if (!obj) {
-      return '';
+    /**
+   * 初始化
+   */
+    ngOnInit(): void {
+      this.#initValue = this.value;
     }
-    return Object.keys(obj)[index];
+
+  ngOnChanges(changes: SimpleChanges): void {
+    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+    //Add '${implements OnChanges}' to the class.
+    this.onChange();
+    this.isUseDefaultTemplate();
   }
 
-  onDetailClick(): void {
-    this.isDetail = true;
-  }
 
-  // 前後切換按鈕（利用currentIndex來紀錄）
+
+  /**
+   * 上一筆資料
+   */
   onPrevClick(): void {
-    if (this.currentIndex > 0 && this.currentIndex < this.value.length) {
-      this.currentIndex--;
-    } else {
-      this.currentIndex = this.value.length - 1;
-    }
-    this.changeRow();
-    this.createYaml();
+    this.#currentIndex =  this.#currentIndex > 0 ? this.#currentIndex - 1 : this.#value.length - 1;
+    this.onChange();
+    this.isUseDefaultTemplate();
   }
-
+  /**
+   * 下一筆資料
+   */
   onNextClick(): void {
-    if (this.currentIndex < this.value.length - 1) {
-      this.currentIndex++;
-    } else {
-      this.currentIndex = 0;
-    }
-    this.changeRow();
-    this.createYaml();
+    this.#currentIndex = this.#currentIndex < this.value.length - 1 ? this.#currentIndex + 1 : 0;
+    this.onChange();
+    this.isUseDefaultTemplate();
+  }
+  /**
+   * 目前顯示資料欲變更
+   */
+  onChange(){
+    this.#currentRow = this.#value[this.#currentIndex];
+    this.change.emit(this.#currentRow);
   }
 
-  onSearch(text: string) {
-    this.search.emit(text);
-    this.currentIndex = 0;
-    this.valueSignal.set(this.value);
+  /**
+   * 點選一筆資料
+   * @param rowIndex
+   */
+  onRowSelect(rowIndex: number) {
+    this.#currentIndex=rowIndex;
+    this.onChange();
+    this.isUseDefaultTemplate();
   }
 
+  /**
+   * 搜尋資料
+   * @param searchText
+   */
+  onSearch(searchText: string): void {
+    this.search.emit(searchText);
+    console.log('觸發 onSearch');
+    this.#currentIndex=-1;
+    // if (this.isUseDefaultTemplate()) {
+    //   this.yamlDocument = jsyaml.dump(this.#value[0]);
+    // }
+  }
+
+  /**
+   * 清除搜尋
+  */
   onSearchClear(): void {
     this.searchText = '';
+    this.value = this.#initValue; // 回復原始資料
+    this.onChange();
+    this.isUseDefaultTemplate();
   }
 
-  onListClick(): void {
-    this.isSearch = true;
-  }
 
-  onRowSelect(rowIndex: any) {
-    this.currentIndex = rowIndex;
-    this.changeRow();
-    this.createYaml();
-  }
-
-  changeRow() {
-    this.row = this.valueSignal()[this.currentIndex];
-    this.sendRow.emit(this.row);
-  }
-
-  createYaml() {
-    if (
-      this.detailTemplate == undefined ||
-      this.titleTemplate == undefined ||
-      this.listTemplate == undefined
-    ) {
-      this.rowYaml = jsyaml.dump(this.row);
+  /**
+   * 是否使用預設的 template
+   */
+  isUseDefaultTemplate() {
+    if (this.detailTemplate == undefined || this.titleTemplate == undefined) {
+      this.yamlDocument = jsyaml.dump(this.#currentRow);
     }
   }
 
+  /**
+   * 取得物件的 key
+   */
+  getKey(value: any, index: number): string {
+    return value ? Object.keys(value)[index] || '' : '';
+  }
 }
 
