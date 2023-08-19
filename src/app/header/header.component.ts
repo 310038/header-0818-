@@ -1,9 +1,18 @@
-// 8/17 22:30
+// 自主更改
+
+/**
+ * 孫博意見
+ * this.#currentIndex盡量不要再太多地方可以更改，在onChange控制更改比較OK，降低未來Debug機率
+ */
+
+// how to rm git
+// git rm -r --cached .
 import { ButtonModule } from 'primeng/button';
 import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
   SimpleChanges,
@@ -42,29 +51,15 @@ import { TimesIcon } from 'primeng/icons/times';
     TimesIcon,
   ],
 })
-export class HeaderComponent  implements OnInit {
+export class HeaderComponent implements OnInit, OnChanges {
 
-  #value: any;
-  @Input()
-  set value(value: any) {
-    this.#value = value;
-    if (value && value.length > 0) {
-      this.#currentIndex=0;   // 有資料時，currentIndex 設為 0
-    }
-    else {
-      this.#currentIndex=-1;  // 沒有資料時，currentIndex 設為 -1
-    }
-  }
-  get value(): any {
-    return this.#value;
-  }
+  @Input() value: any;
   @Input() titleTemplate!: TemplateRef<any>;
   @Input() detailTemplate!: TemplateRef<any>;
   @Input() listTemplate!: TemplateRef<any>;
   @Input() isSearchDisabled: boolean = false;
 
   @Output() search = new EventEmitter<any>();
-
   @Output() change = new EventEmitter<any>();
 
   yamlDocument: any;
@@ -73,57 +68,61 @@ export class HeaderComponent  implements OnInit {
   isShowList: boolean = false;
 
   #initValue: any;
-  #currentIndex = -1; // 沒有資料時，currentIndex 設為 -1
+  #currentIndex: number = -1;
   #currentRow: any;
 
-    /**
+
+  /**
    * 初始化
    */
-    ngOnInit(): void {
-      this.#initValue = this.value;
-    }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
-    this.onChange();
-    this.isUseDefaultTemplate();
+  ngOnInit(): void {
+    this.#initValue = this.value;
+    this.currentRowChange(0);
   }
-
+  /**
+   * ngOnChanges
+   * @param changes
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    this.currentRowChange(this.#currentIndex);
+  }
+  /**
+   * currentRowChange
+   * @param rowIndex
+   */
+  currentRowChange(rowIndex: number): void {
+    if (rowIndex >= 0) {
+      this.#currentRow = this.value[rowIndex];
+      if (this.isUseDefaultTemplate()) {
+        this.yamlDocument = jsyaml.dump(this.#currentRow);
+      }
+      this.#currentIndex = rowIndex;
+      this.change.emit(this.#currentRow);
+    }
+  }
 
 
   /**
    * 上一筆資料
    */
   onPrevClick(): void {
-    this.#currentIndex =  this.#currentIndex > 0 ? this.#currentIndex - 1 : this.#value.length - 1;
-    this.onChange();
-    this.isUseDefaultTemplate();
+    const rowIndex = (this.#currentIndex - 1 + this.value.length) % this.value.length;
+    this.currentRowChange(rowIndex);
   }
+
   /**
    * 下一筆資料
    */
   onNextClick(): void {
-    this.#currentIndex = this.#currentIndex < this.value.length - 1 ? this.#currentIndex + 1 : 0;
-    this.onChange();
-    this.isUseDefaultTemplate();
+    const rowIndex = (this.#currentIndex + 1) % this.value.length;
+    this.currentRowChange(rowIndex);
   }
-  /**
-   * 目前顯示資料欲變更
-   */
-  onChange(){
-    this.#currentRow = this.#value[this.#currentIndex];
-    this.change.emit(this.#currentRow);
-  }
-
   /**
    * 點選一筆資料
    * @param rowIndex
    */
   onRowSelect(rowIndex: number) {
-    this.#currentIndex=rowIndex;
-    this.onChange();
-    this.isUseDefaultTemplate();
+    this.currentRowChange(rowIndex);
   }
 
   /**
@@ -131,12 +130,11 @@ export class HeaderComponent  implements OnInit {
    * @param searchText
    */
   onSearch(searchText: string): void {
+
+    // 自主更改
+    this.currentRowChange(0)
+
     this.search.emit(searchText);
-    console.log('觸發 onSearch');
-    this.#currentIndex=-1;
-    // if (this.isUseDefaultTemplate()) {
-    //   this.yamlDocument = jsyaml.dump(this.#value[0]);
-    // }
   }
 
   /**
@@ -145,8 +143,7 @@ export class HeaderComponent  implements OnInit {
   onSearchClear(): void {
     this.searchText = '';
     this.value = this.#initValue; // 回復原始資料
-    this.onChange();
-    this.isUseDefaultTemplate();
+    this.currentRowChange(this.#currentIndex);
   }
 
 
@@ -154,9 +151,7 @@ export class HeaderComponent  implements OnInit {
    * 是否使用預設的 template
    */
   isUseDefaultTemplate() {
-    if (this.detailTemplate == undefined || this.titleTemplate == undefined) {
-      this.yamlDocument = jsyaml.dump(this.#currentRow);
-    }
+    return this.detailTemplate == undefined || this.titleTemplate == undefined
   }
 
   /**
