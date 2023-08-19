@@ -1,9 +1,11 @@
 <his-header
   [value]="value"
   [isSearchDisabled]="isSearchDisabled"
-  (sendRow)="onRowSelect($event)"
+  (change)="onChange($event)"
   (search)="onSearch($event)"
 ></his-header>
+<hr />
+{{currentRow | json}}
 <!-- {{currentRow |json}} -->
 <!-- 打開註解測試客製化template傳進去header.component -->
 <!-- <his-header
